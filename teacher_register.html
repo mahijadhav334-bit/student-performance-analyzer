@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Registration{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Create Teacher Account</h1>
+    <p class="page-subtitle">Set up the first teacher account to manage students and analytics.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('teacher_register') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required maxlength="100">
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required maxlength="120">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Minimum 6 characters" required minlength="6">
+
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required minlength="6">
+
+        <button type="submit">Create Account</button>
+    </form>
+    <a href="{{ url_for('teacher_login') }}"><button type="button" class="secondary">Already have an account? Login</button></a>
+</div>
+{% endblock %}

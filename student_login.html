@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Login{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Student Login</h1>
+    <p class="page-subtitle">Enter your USN and password to view your dashboard and performance details.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('student') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <label for="usn">University Seat Number</label>
+        <input type="text" id="usn" name="usn" placeholder="Enter USN" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+        <button type="submit">Login</button>
+    </form>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:8px;">Default password for new students: <strong>changeme</strong></p>
+    <a href="{{ url_for('home') }}"><button type="button" class="secondary">Back Home</button></a>
+</div>
+{% endblock %}

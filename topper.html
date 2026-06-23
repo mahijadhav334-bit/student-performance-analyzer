@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Class Topper{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Class Topper</h1>
+    <p class="page-subtitle">Celebrate the student with the highest average marks.</p>
+</div>
+
+<div class="card">
+    <h2>{{ topper.name }}</h2>
+    <p><strong>USN:</strong> {{ topper.usn }}</p>
+    <p><strong>Department:</strong> {{ topper.department }}</p>
+    <p><strong>Average Marks:</strong> {{ "%.2f"|format(topper.marks) }}</p>
+    <p><strong>Attendance:</strong> {{ "%.2f"|format(topper.attendance) }}%</p>
+    <p><strong>Result:</strong> {{ topper.result() }}</p>
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+</div>
+{% endblock %}

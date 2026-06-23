@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Add Student</h1>
+    <p class="page-subtitle">Register a new student with their academic details.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('add_student') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <label for="name">Student Name</label>
+        <input type="text" id="name" name="name" placeholder="Full name" required maxlength="100">
+
+        <label for="usn">USN</label>
+        <input type="text" id="usn" name="usn" placeholder="University Seat Number" required maxlength="20">
+
+        <label for="department">Department</label>
+        <input type="text" id="department" name="department" placeholder="Department" required maxlength="50">
+
+        <label for="email">Student Email (optional)</label>
+        <input type="email" id="email" name="email" placeholder="student@example.com" maxlength="120">
+
+        <label for="parent_email">Parent Email (optional)</label>
+        <input type="email" id="parent_email" name="parent_email" placeholder="parent@example.com" maxlength="120">
+
+        <label for="password">Initial Password (leave blank for default: changeme)</label>
+        <input type="text" id="password" name="password" placeholder="changeme" maxlength="50">
+
+        <label for="attendance">Attendance (%)</label>
+        <input type="number" id="attendance" name="attendance" step="0.01" min="0" max="100" value="0" required>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+            <div>
+                <label for="python">Python</label>
+                <input type="number" id="python" name="python" step="0.01" min="0" max="100" value="0" required>
+            </div>
+            <div>
+                <label for="dbms">DBMS</label>
+                <input type="number" id="dbms" name="dbms" step="0.01" min="0" max="100" value="0" required>
+            </div>
+            <div>
+                <label for="dsa">DSA</label>
+                <input type="number" id="dsa" name="dsa" step="0.01" min="0" max="100" value="0" required>
+            </div>
+            <div>
+                <label for="maths">Maths</label>
+                <input type="number" id="maths" name="maths" step="0.01" min="0" max="100" value="0" required>
+            </div>
+            <div>
+                <label for="fcn">FCN</label>
+                <input type="number" id="fcn" name="fcn" step="0.01" min="0" max="100" value="0" required>
+            </div>
+        </div>
+
+        <button type="submit">Add Student</button>
+    </form>
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Cancel</button></a>
+</div>
+{% endblock %}

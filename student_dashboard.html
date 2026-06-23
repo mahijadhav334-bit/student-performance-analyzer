@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header student-page-header">
+    <div>
+        <h1 class="page-title">Student Dashboard</h1>
+        <p class="page-subtitle">Review your marks, attendance, and result status in one view.</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('student_quiz', id=student.id) }}"><button type="button" class="secondary">Mock Quiz</button></a>
+        <a href="{{ url_for('student_chat', id=student.id) }}"><button type="button" class="secondary">Ask AI Doubt</button></a>
+        <a href="{{ url_for('student_profile', id=student.id) }}"><button type="button" class="secondary">Edit Profile</button></a>
+        <a href="{{ url_for('student_change_password', id=student.id) }}"><button type="button" class="secondary">Change Password</button></a>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <h3>Name</h3>
+        <p>{{ student.name }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>USN</h3>
+        <p>{{ student.usn }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Attendance</h3>
+        <p>{{ "%.2f"|format(student.attendance) }}%</p>
+    </div>
+    <div class="stat-card">
+        <h3>Average Marks</h3>
+        <p>{{ "%.2f"|format(student.marks) }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Result</h3>
+        <p>{{ student.result() }}</p>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <h3>Academic Progress</h3>
+    <div class="progress-group">
+        <div class="progress-label"><span>Attendance</span><span>{{ "%.0f"|format(student.attendance) }}%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width: {{ student.attendance if student.attendance <= 100 else 100 }}%;"></div></div>
+    </div>
+    <div class="progress-group">
+        <div class="progress-label"><span>Overall Score</span><span>{{ "%.0f"|format(student.marks) }}%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width: {{ student.marks if student.marks <= 100 else 100 }}%;"></div></div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <h3>Subject Breakdown</h3>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; margin-top: 18px;">
+        {% for label, value in [('Python', student.python), ('DBMS', student.dbms), ('DSA', student.dsa), ('Maths', student.maths), ('FCN', student.fcn)] %}
+        <div class="stat-card">
+            <h4>{{ label }}</h4>
+            <p>{{ "%.2f"|format(value) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if recent_quizzes %}
+<div class="card" style="margin-top: 24px;">
+    <h3>Recent Quiz Attempts</h3>
+    <div class="table-card responsive-table" style="margin-top:12px;box-shadow:none;border:none;padding:0;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in recent_quizzes %}
+                <tr>
+                    <td>{{ q.subject }}</td>
+                    <td><span class="badge {{ 'positive' if q.score >= 3 else '' }}">{{ q.score }}/{{ q.total_questions }}</span></td>
+                    <td>{{ q.date_attempted.strftime('%d %b %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if announcements %}
+<div class="card" style="margin-top: 24px;">
+    <h3>📢 Announcements</h3>
+    <div style="margin-top:14px;display:grid;gap:12px;">
+        {% for a in announcements %}
+        <div style="padding:12px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface-soft);">
+            <strong>{% if a.is_pinned %}📌 {% endif %}{{ a.title }}</strong>
+            <p style="margin-top:4px;color:var(--muted);font-size:0.92rem;">{{ a.content[:200] }}{% if a.content|length > 200 %}...{% endif %}</p>
+            <small style="color:var(--muted);">{{ a.created_at.strftime('%d %b %Y') }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div style="margin-top: 24px;">
+    <a href="{{ url_for('logout') }}"><button type="button" class="secondary">Logout</button></a>
+</div>
+{% endblock %}

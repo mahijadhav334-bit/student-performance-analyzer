@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Overview{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Attendance Overview</h1>
+    <p class="page-subtitle">See attendance values for all registered students.</p>
+</div>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>USN</th>
+                <th>Attendance</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ s.name }}</td>
+                <td>{{ s.usn }}</td>
+                <td>{{ "%.2f"|format(s.attendance) }}%</td>
+                <td><a href="{{ url_for('update_attendance', id=s.id) }}"><button type="button" class="secondary">Update</button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
