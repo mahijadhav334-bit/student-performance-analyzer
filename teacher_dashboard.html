@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header teacher-page-header">
+    <div>
+        <h1 class="page-title">Teacher Dashboard</h1>
+        <p class="page-subtitle">Manage students, update records, review subject performance, and export reports.</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('teacher_profile') }}"><button type="button" class="secondary">Teacher Profile</button></a>
+    </div>
+</div>
+
+{% if teacher %}
+<div class="profile-card" style="margin-top: 24px;">
+    <div class="profile-avatar-wrap">
+        {% if teacher.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' ~ teacher.image_filename) }}" alt="{{ teacher.name }}" class="profile-avatar">
+        {% else %}
+            <div class="profile-avatar placeholder">
+                <span>Profile</span>
+                <span>Photo</span>
+            </div>
+        {% endif %}
+    </div>
+    <div class="profile-details">
+        <h3>Teacher Profile</h3>
+        <dl>
+            <dt>Name</dt>
+            <dd>{{ teacher.name or 'Not set' }}</dd>
+            <dt>Designation</dt>
+            <dd>{{ teacher.designation or 'Not set' }}</dd>
+            <dt>Qualification</dt>
+            <dd>{{ teacher.qualification or 'Not set' }}</dd>
+            <dt>Department</dt>
+            <dd>{{ teacher.department or 'Not set' }}</dd>
+            <dt>Subjects</dt>
+            <dd>{{ teacher.subjects_handled or 'Not set' }}</dd>
+            <dt>Contact</dt>
+            <dd>{{ teacher.contact_number or 'Not set' }}</dd>
+            <dt>WhatsApp</dt>
+            <dd>{{ teacher.whatsapp_number or 'Not set' }}</dd>
+            <dt>Email</dt>
+            <dd>{{ teacher.email or 'Not set' }}</dd>
+            <dt>Contacting Times</dt>
+            <dd>{{ teacher.contacting_times or 'Not set' }}</dd>
+            <dt>Staff Room</dt>
+            <dd>{{ teacher.staff_room_no or 'Not set' }}</dd>
+        </dl>
+    </div>
+</div>
+{% endif %}
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <h3>Total Students</h3>
+        <p>{{ total_students }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Average Marks</h3>
+        <p>{{ "%.2f"|format(avg_marks) }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Average Attendance</h3>
+        <p>{{ "%.2f"|format(avg_attendance) }}%</p>
+    </div>
+    <div class="stat-card">
+        <h3>Pass Rate</h3>
+        <p>{{ "%.2f"|format(pass_rate) }}%</p>
+    </div>
+</div>
+
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 24px; gap: 20px;">
+    <div class="card">
+        <h3>Quick Actions</h3>
+        <a href="{{ url_for('add_student') }}"><button>Add Student</button></a>
+        <a href="{{ url_for('bulk_attendance') }}"><button type="button" class="secondary">Mark Attendance</button></a>
+        <a href="{{ url_for('analytics') }}"><button type="button" class="secondary">Analytics</button></a>
+        <a href="{{ url_for('export_excel') }}"><button type="button" class="secondary">Export Excel</button></a>
+        <a href="{{ url_for('export_pdf') }}"><button type="button" class="secondary">Export PDF</button></a>
+        <a href="{{ url_for('send_monthly_reports') }}"><button type="button" class="secondary">Email Monthly Reports</button></a>
+    </div>
+    <div class="card">
+        <h3>Performance Tools</h3>
+        <a href="{{ url_for('ranklist') }}"><button type="button">Rank List</button></a>
+        <a href="{{ url_for('topper') }}"><button type="button" class="secondary">Topper</button></a>
+        <a href="{{ url_for('student_attendance') }}"><button type="button" class="secondary">Attendance Overview</button></a>
+        <a href="{{ url_for('announcements') }}"><button type="button" class="secondary">Announcements</button></a>
+    </div>
+</div>
+
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 24px; gap: 20px;">
+    <div class="card">
+        <h3>Class Alerts</h3>
+        <p>Monitor attendance and academic risk in real time.</p>
+        <div class="progress-group">
+            <div class="progress-label"><span>Low Attendance</span><span>{{ low_attendance_count }}</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width: {{ (low_attendance_count / total_students * 100) if total_students else 0 }}%;"></div></div>
+        </div>
+        <div class="progress-group">
+            <div class="progress-label"><span>At-Risk Students</span><span>{{ at_risk_count }}</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width: {{ (at_risk_count / total_students * 100) if total_students else 0 }}%; background: linear-gradient(90deg, rgba(248, 113, 113, 0.9), rgba(234, 84, 85, 0.95));"></div></div>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Top Performers</h3>
+        <ul class="action-list" style="margin-top: 16px;">
+            {% for student in top_students %}
+                <li><strong>{{ student.name }}</strong> — {{ "%.2f"|format(student.marks) }} avg</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% if recent_announcements %}
+<div class="card" style="margin-top:24px;">
+    <h3>📢 Recent Announcements</h3>
+    <div style="margin-top:12px;display:grid;gap:10px;">
+        {% for a in recent_announcements %}
+        <div style="padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-soft);">
+            <strong>{% if a.is_pinned %}📌 {% endif %}{{ a.title }}</strong>
+            <small style="color:var(--muted);margin-left:8px;">{{ a.created_at.strftime('%d %b %Y') }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card subject-report" style="margin-top: 24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;">
+        <div>
+            <h3>Subject Performance Report</h3>
+            <p class="muted">A compact view of averages, ranges, and trends across subjects.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('analytics') }}"><button type="button" class="secondary">View Analytics</button></a>
+        </div>
+    </div>
+
+    <div class="subject-chart-grid" style="margin-top:16px;display:grid;grid-template-columns: 1fr 340px; gap:18px;">
+        <div class="card subject-chart-card" style="padding:18px;">
+            <canvas id="subjectChart" height="220"></canvas>
+        </div>
+
+        <div class="card subject-table-card" style="padding:12px;">
+            <h4 style="margin-bottom:8px;">Summary Table</h4>
+            <table class="subject-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Avg</th>
+                        <th>Max</th>
+                        <th>Min</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject, stats in subject_stats.items() %}
+                    <tr>
+                        <td>{{ subject }}</td>
+                        <td>{{ "%.2f"|format(stats.avg) }}</td>
+                        <td>{{ "%.2f"|format(stats.max) }}</td>
+                        <td>{{ "%.2f"|format(stats.min) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="form-card" style="margin-top: 24px;">
+    <form method="GET" action="{{ url_for('teacher_dashboard') }}">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end;">
+            <div style="flex:1;min-width:200px;">
+                <label for="search">Search Students</label>
+                <input type="text" id="search" name="search" placeholder="Search by name or USN">
+            </div>
+            {% if departments %}
+            <div style="min-width:180px;">
+                <label for="department">Department</label>
+                <select id="department" name="department">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept }}">{{ dept }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <button type="submit" style="min-height:50px;">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-card responsive-table" style="margin-top: 24px;">
+    <h3>Student Records</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>USN</th>
+                <th>Department</th>
+                <th>Python</th>
+                <th>DBMS</th>
+                <th>DSA</th>
+                <th>Maths</th>
+                <th>FCN</th>
+                <th>Attendance</th>
+                <th>Average Marks</th>
+                <th>Result</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.usn }}</td>
+                <td>{{ s.department }}</td>
+                <td>{{ "%.2f"|format(s.python) }}</td>
+                <td>{{ "%.2f"|format(s.dbms) }}</td>
+                <td>{{ "%.2f"|format(s.dsa) }}</td>
+                <td>{{ "%.2f"|format(s.maths) }}</td>
+                <td>{{ "%.2f"|format(s.fcn) }}</td>
+                <td>{{ "%.2f"|format(s.attendance) }}%</td>
+                <td>{{ "%.2f"|format(s.marks) }}</td>
+                <td>{{ s.result() }}</td>
+                <td>
+                    {% if s.attendance < 75 %}
+                        <span class="badge" style="background: rgba(251, 113, 133, 0.15);">Low Attendance</span>
+                    {% else %}
+                        <span class="badge positive">Good</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <a href="{{ url_for('edit_student', id=s.id) }}"><button type="button" class="secondary" style="padding:8px 12px;font-size:0.85rem;">Edit</button></a>
+                        <form method="POST" action="{{ url_for('delete_student', id=s.id) }}" style="display:inline;" onsubmit="return confirm('Remove student {{ s.name }}?')">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="secondary" style="padding:8px 12px;font-size:0.85rem;">Remove</button>
+                        </form>
+                        <a href="{{ url_for('student_report', id=s.id) }}"><button type="button" class="secondary" style="padding:8px 12px;font-size:0.85rem;">PDF</button></a>
+                        <a href="{{ url_for('email_student_report', id=s.id) }}"><button type="button" class="secondary" style="padding:8px 12px;font-size:0.85rem;">Email</button></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const subjects = [
+            {% for subject in subject_stats.keys() %}
+                "{{ subject }}",
+            {% endfor %}
+        ];
+        const avgData = [
+            {% for subject, stats in subject_stats.items() %}
+                {{ stats.avg }},
+            {% endfor %}
+        ];
+        const maxData = [
+            {% for subject, stats in subject_stats.items() %}
+                {{ stats.max }},
+            {% endfor %}
+        ];
+        const minData = [
+            {% for subject, stats in subject_stats.items() %}
+                {{ stats.min }},
+            {% endfor %}
+        ];
+
+        const ctx = document.getElementById('subjectChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [
+                        {
+                            label: 'Average',
+                            data: avgData,
+                            backgroundColor: 'rgba(59,130,246,0.85)'
+                        },
+                        {
+                            label: 'Max',
+                            data: maxData,
+                            backgroundColor: 'rgba(34,197,94,0.85)'
+                        },
+                        {
+                            label: 'Min',
+                            data: minData,
+                            backgroundColor: 'rgba(248,113,113,0.85)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { stacked: false, ticks: { font: { size: 11 } } },
+                        y: { beginAtZero: true, ticks: { stepSize: 10, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

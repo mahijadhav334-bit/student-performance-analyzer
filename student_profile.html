@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+<div class="page-header student-page-header">
+    <div>
+        <h1 class="page-title">Student Profile</h1>
+        <p class="page-subtitle">Complete your profile details for a professional student record.</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('student_dashboard', id=student.id) }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+    </div>
+</div>
+
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label for="full_name">Full Name</label>
+        <input type="text" id="full_name" name="full_name" placeholder="Full Name" value="{{ student.name }}" required>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div>
+                <label for="middle_name">Middle Name</label>
+                <input type="text" id="middle_name" name="middle_name" placeholder="Middle Name" value="{{ student.middle_name or '' }}">
+            </div>
+            <div>
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" placeholder="Last Name" value="{{ student.last_name or '' }}">
+            </div>
+        </div>
+
+        <label for="address">Address</label>
+        <textarea id="address" name="address" placeholder="Home Address">{{ student.address or '' }}</textarea>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div>
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" value="{{ student.dob or '' }}">
+            </div>
+            <div>
+                <label for="blood_group">Blood Group</label>
+                <input type="text" id="blood_group" name="blood_group" placeholder="Blood Group" value="{{ student.blood_group or '' }}">
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div>
+                <label for="parent_name">Parent Name</label>
+                <input type="text" id="parent_name" name="parent_name" placeholder="Parent Name" value="{{ student.parent_name or '' }}">
+            </div>
+            <div>
+                <label for="parent_contact">Parent Contact</label>
+                <input type="text" id="parent_contact" name="parent_contact" placeholder="Parent Contact" value="{{ student.parent_contact or '' }}">
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div>
+                <label for="phone_number">Student Contact</label>
+                <input type="text" id="phone_number" name="phone_number" placeholder="Student Contact" value="{{ student.phone_number or '' }}">
+            </div>
+            <div>
+                <label for="email">Email ID</label>
+                <input type="email" id="email" name="email" placeholder="Email ID" value="{{ student.email or '' }}">
+            </div>
+        </div>
+
+        <label for="linkedin">LinkedIn Profile Link</label>
+        <input type="url" id="linkedin" name="linkedin" placeholder="https://www.linkedin.com/in/yourprofile" value="{{ student.linkedin or '' }}">
+
+        <label for="department">Department</label>
+        <input type="text" id="department" name="department" placeholder="Department" value="{{ student.department or '' }}" required>
+
+        <label for="image">Passport Size Photo</label>
+        <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg">
+        {% if student.image_filename %}
+            <p>Current photo: <strong>{{ student.image_filename }}</strong></p>
+        {% endif %}
+
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
+{% endblock %}

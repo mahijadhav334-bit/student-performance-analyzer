@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Bulk Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Mark Attendance</h1>
+    <p class="page-subtitle">Select a date and mark attendance for all students at once.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('bulk_attendance') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required value="{{ now().strftime('%Y-%m-%d') if now is defined else '' }}">
+
+        <div class="table-card responsive-table" style="margin-top:16px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:50px;">
+                            <input type="checkbox" id="select-all" style="width:auto;" checked>
+                        </th>
+                        <th>Name</th>
+                        <th>USN</th>
+                        <th>Department</th>
+                        <th>Current %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="present" value="{{ s.id }}" style="width:auto;" checked>
+                        </td>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.usn }}</td>
+                        <td>{{ s.department }}</td>
+                        <td>
+                            <span class="badge {{ 'positive' if s.attendance >= 75 else '' }}">
+                                {{ "%.1f"|format(s.attendance) }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" style="margin-top:16px;">Save Attendance</button>
+    </form>
+</div>
+
+{% if recent_dates %}
+<div class="card" style="margin-top:24px;">
+    <h3>Recently Marked Dates</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        {% for d in recent_dates %}
+        <span class="badge">{{ d.strftime('%d %b %Y') }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div style="margin-top:24px;">
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('select-all').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('input[name="present"]');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+});
+</script>
+{% endblock %}

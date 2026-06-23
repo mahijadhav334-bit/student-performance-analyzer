@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error{% endblock %}
+
+{% block content %}
+<div class="page-header" style="text-align:center;">
+    <h1 class="page-title" style="font-size:4rem;margin-bottom:0;">500</h1>
+    <p class="page-subtitle" style="font-size:1.2rem;">Something went wrong on our end. Please try again later.</p>
+</div>
+<div style="text-align:center;margin-top:24px;">
+    <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+</div>
+{% endblock %}
