@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Announcements{% endblock %}
+
+{% block content %}
+<div class="page-header teacher-page-header">
+    <div>
+        <h1 class="page-title">Announcements</h1>
+        <p class="page-subtitle">Manage notices and updates visible to all students.</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('create_announcement') }}"><button type="button">New Announcement</button></a>
+    </div>
+</div>
+
+{% if announcements %}
+<div class="announcement-list" style="display:grid;gap:16px;margin-top:24px;">
+    {% for a in announcements %}
+    <div class="card announcement-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+            <div>
+                <h3 style="margin-bottom:4px;">
+                    {% if a.is_pinned %}<span title="Pinned" style="margin-right:6px;">📌</span>{% endif %}
+                    {{ a.title }}
+                </h3>
+                <p class="muted" style="font-size:0.88rem;">Posted by {{ a.created_by or 'Teacher' }} on {{ a.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+            </div>
+            <form method="POST" action="{{ url_for('delete_announcement', id=a.id) }}" onsubmit="return confirm('Delete this announcement?')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="secondary" style="padding:8px 14px;font-size:0.85rem;">Delete</button>
+            </form>
+        </div>
+        <p style="margin-top:12px;line-height:1.7;color:var(--text);">{{ a.content }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="margin-top:24px;text-align:center;">
+    <p class="muted">No announcements yet. Create one to notify students.</p>
+</div>
+{% endif %}
+
+<div style="margin-top:24px;">
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+</div>
+{% endblock %}

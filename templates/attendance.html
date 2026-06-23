@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Update Attendance</h1>
+    <p class="page-subtitle">Record attendance for {{ student.name }} and save the updated value.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('update_attendance', id=student.id) }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label for="attendance">Attendance (%)</label>
+        <input type="number" id="attendance" step="0.01" min="0" max="100" name="attendance" value="{{ student.attendance }}" required>
+        <button type="submit">Save Attendance</button>
+    </form>
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+</div>
+
+{% if logs %}
+<div class="card" style="margin-top:24px;">
+    <h3>Attendance History (Last 30 entries)</h3>
+    <div class="table-card responsive-table" style="margin-top:12px;box-shadow:none;border:none;padding:0;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Marked By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.date.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <span class="badge {{ 'positive' if log.status == 'Present' else 'danger' if log.status == 'Absent' else '' }}">
+                            {{ log.status }}
+                        </span>
+                    </td>
+                    <td>{{ log.marked_by or 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

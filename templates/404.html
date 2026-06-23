@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+<div class="page-header" style="text-align:center;">
+    <h1 class="page-title" style="font-size:4rem;margin-bottom:0;">404</h1>
+    <p class="page-subtitle" style="font-size:1.2rem;">The page you're looking for doesn't exist or has been moved.</p>
+</div>
+<div style="text-align:center;margin-top:24px;">
+    <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+</div>
+{% endblock %}

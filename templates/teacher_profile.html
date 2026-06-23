@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Profile{% endblock %}
+
+{% block content %}
+<div class="page-header teacher-page-header">
+    <div>
+        <h1 class="page-title">Teacher Profile</h1>
+        <p class="page-subtitle">Add or update your professional profile details and photo.</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+    </div>
+</div>
+
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <div class="grid teacher-form-grid">
+            <div>
+                <label for="name">Teacher Name</label>
+                <input type="text" id="name" name="name" placeholder="Teacher Name" value="{{ teacher.name or '' }}" required>
+            </div>
+            <div>
+                <label for="designation">Designation</label>
+                <input type="text" id="designation" name="designation" placeholder="Designation" value="{{ teacher.designation or '' }}">
+            </div>
+            <div>
+                <label for="qualification">Qualification</label>
+                <input type="text" id="qualification" name="qualification" placeholder="Qualification" value="{{ teacher.qualification or '' }}">
+            </div>
+            <div>
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" placeholder="Department" value="{{ teacher.department or '' }}">
+            </div>
+            <div>
+                <label for="subjects_handled">Subjects Handled</label>
+                <input type="text" id="subjects_handled" name="subjects_handled" placeholder="e.g. Python, DBMS" value="{{ teacher.subjects_handled or '' }}">
+            </div>
+            <div>
+                <label for="staff_room_no">Staff Room No.</label>
+                <input type="text" id="staff_room_no" name="staff_room_no" placeholder="Staff Room No." value="{{ teacher.staff_room_no or '' }}">
+            </div>
+            <div>
+                <label for="contact_number">Contact Number</label>
+                <input type="text" id="contact_number" name="contact_number" placeholder="Contact Number" value="{{ teacher.contact_number or '' }}">
+            </div>
+            <div>
+                <label for="whatsapp_number">WhatsApp Number</label>
+                <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="WhatsApp Number" value="{{ teacher.whatsapp_number or '' }}">
+            </div>
+            <div>
+                <label for="email">Email ID</label>
+                <input type="email" id="email" name="email" placeholder="Email ID" value="{{ teacher.email or '' }}">
+            </div>
+            <div>
+                <label for="contacting_times">Contacting Times</label>
+                <input type="text" id="contacting_times" name="contacting_times" placeholder="Best times to contact" value="{{ teacher.contacting_times or '' }}">
+            </div>
+        </div>
+
+        <label for="image">Profile Picture (Passport size)</label>
+        <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg">
+        {% if teacher.image_filename %}
+            <p>Current image: <strong>{{ teacher.image_filename }}</strong></p>
+        {% endif %}
+
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
+{% endblock %}

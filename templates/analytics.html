@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Analytics Dashboard</h1>
+    <p class="page-subtitle">Visualize student grades and attendance trends across the class.</p>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <h3>Total Students</h3>
+        <p>{{ total_students }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Average Marks</h3>
+        <p>{{ avg_marks }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Average Attendance</h3>
+        <p>{{ avg_attendance }}%</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Marks Analysis</h3>
+    <canvas id="marksChart" style="max-height: 420px;"></canvas>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <h3>Attendance Analysis</h3>
+    <canvas id="attendanceChart" style="max-height: 420px;"></canvas>
+</div>
+
+<div style="margin-top: 24px;">
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Back to Dashboard</button></a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const names = {{ names|tojson }};
+    const marks = {{ marks|tojson }};
+    const attendance = {{ attendance|tojson }};
+
+    new Chart(
+        document.getElementById('marksChart'),
+        {
+            type: 'bar',
+            data: {
+                labels: names,
+                datasets: [{
+                    label: 'Average Marks',
+                    data: marks,
+                    backgroundColor: 'rgba(56, 189, 248, 0.75)',
+                    borderColor: 'rgba(56, 189, 248, 1)',
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    maxBarThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        }
+    );
+
+    new Chart(
+        document.getElementById('attendanceChart'),
+        {
+            type: 'bar',
+            data: {
+                labels: names,
+                datasets: [{
+                    label: 'Attendance %',
+                    data: attendance,
+                    backgroundColor: 'rgba(34, 197, 94, 0.75)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    maxBarThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        }
+    );
+});
+</script>
+{% endblock %}

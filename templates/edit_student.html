@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Edit Student</h1>
+    <p class="page-subtitle">Update details for {{ student.name }}.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('edit_student', id=student.id) }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <label for="name">Student Name</label>
+        <input type="text" id="name" name="name" value="{{ student.name }}" required maxlength="100">
+
+        <label for="usn">USN</label>
+        <input type="text" id="usn" name="usn" value="{{ student.usn }}" required maxlength="20">
+
+        <label for="department">Department</label>
+        <input type="text" id="department" name="department" value="{{ student.department }}" required maxlength="50">
+
+        <label for="email">Student Email</label>
+        <input type="email" id="email" name="email" value="{{ student.email or '' }}" maxlength="120">
+
+        <label for="parent_email">Parent Email</label>
+        <input type="email" id="parent_email" name="parent_email" value="{{ student.parent_email or '' }}" maxlength="120">
+
+        <label for="new_password">Reset Password (leave blank to keep current)</label>
+        <input type="text" id="new_password" name="new_password" placeholder="New password (min 6 chars)" maxlength="50">
+
+        <label for="attendance">Attendance (%)</label>
+        <input type="number" id="attendance" name="attendance" step="0.01" min="0" max="100" value="{{ student.attendance }}" required>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+            <div>
+                <label for="python">Python</label>
+                <input type="number" id="python" name="python" step="0.01" min="0" max="100" value="{{ student.python }}" required>
+            </div>
+            <div>
+                <label for="dbms">DBMS</label>
+                <input type="number" id="dbms" name="dbms" step="0.01" min="0" max="100" value="{{ student.dbms }}" required>
+            </div>
+            <div>
+                <label for="dsa">DSA</label>
+                <input type="number" id="dsa" name="dsa" step="0.01" min="0" max="100" value="{{ student.dsa }}" required>
+            </div>
+            <div>
+                <label for="maths">Maths</label>
+                <input type="number" id="maths" name="maths" step="0.01" min="0" max="100" value="{{ student.maths }}" required>
+            </div>
+            <div>
+                <label for="fcn">FCN</label>
+                <input type="number" id="fcn" name="fcn" step="0.01" min="0" max="100" value="{{ student.fcn }}" required>
+            </div>
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="{{ url_for('teacher_dashboard') }}"><button type="button" class="secondary">Cancel</button></a>
+</div>
+{% endblock %}
